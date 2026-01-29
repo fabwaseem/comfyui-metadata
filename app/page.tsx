@@ -1,64 +1,123 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { ImageUploadZone } from "@/components/landing/image-upload-zone";
+import { ThemeToggle } from "@/components/landing/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { FileSearch, Layers, Zap, Sparkles } from "lucide-react";
+import Link from "next/link";
+
+export default function LandingPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="relative min-h-screen overflow-x-hidden">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,oklch(0.7_0.08_260/.15),transparent)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_100%_0%,oklch(0.6_0.06_280/.08),transparent)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_0%_100%,oklch(0.55_0.07_300/.06),transparent)]" />
+
+      <header className="glass border-b border-glass-border" role="banner">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-semibold"
+            aria-label="ComfyUI Metadata Preview — Home"
+          >
+            <span className="font-syne text-lg">ComfyUI Metadata</span>
+          </Link>
+          <nav className="flex items-center gap-3" aria-label="Primary">
+            <ThemeToggle />
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/app">Open app</Link>
+            </Button>
+          </nav>
+        </div>
+      </header>
+
+      <main
+        id="main-content"
+        className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24"
+        tabIndex={-1}
+      >
+        <section className="text-center">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
+            <Sparkles className="size-4" aria-hidden />
+            Free · No signup
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+          <h1 className="font-syne text-4xl font-bold tracking-tight text-foreground text-balance sm:text-5xl md:text-6xl">
+            Extract prompts & workflow
+            <br />
+            <span className="text-primary">from ComfyUI PNGs</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+            Drop ComfyUI-generated images to view embedded prompts and workflow
+            metadata. Single or bulk — all in the browser.
+          </p>
+        </section>
+
+        <section className="mt-16">
+          <h2 className="mb-6 text-center font-syne text-2xl font-semibold text-foreground sm:text-3xl">
+            Drop images to get started
+          </h2>
+          <ImageUploadZone />
+        </section>
+
+        <section className="mt-20 grid gap-8 sm:grid-cols-3">
+          <div className="glass-card flex flex-col items-center gap-3 p-6 text-center">
+            <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary">
+              <FileSearch className="size-6" aria-hidden />
+            </div>
+            <h3 className="font-syne font-semibold text-foreground">
+              Prompt extraction
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Read positive/negative prompts and node text from embedded
+              metadata.
+            </p>
+          </div>
+          <div className="glass-card flex flex-col items-center gap-3 p-6 text-center">
+            <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary">
+              <Layers className="size-6" aria-hidden />
+            </div>
+            <h3 className="font-syne font-semibold text-foreground">
+              Workflow view
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Inspect node graph and parameters stored inside the image.
+            </p>
+          </div>
+          <div className="glass-card flex flex-col items-center gap-3 p-6 text-center">
+            <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary">
+              <Zap className="size-6" aria-hidden />
+            </div>
+            <h3 className="font-syne font-semibold text-foreground">
+              Bulk & export
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Process many images at once and export prompts or workflow JSON.
+            </p>
+          </div>
+        </section>
+
+        <footer className="mt-24 border-t border-glass-border py-8 text-center text-sm text-muted-foreground">
+          <p>ComfyUI Metadata · Extract and view metadata from ComfyUI PNGs</p>
+          <p className="mt-2">
+            <a
+              href="https://waseemanjum.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground underline-offset-4 hover:underline"
+            >
+              waseemanjum.com
+            </a>
+            {" · "}
+            <a
+              href="https://github.com/fabwaseem"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground underline-offset-4 hover:underline"
+            >
+              @fabwaseem
+            </a>
+          </p>
+        </footer>
       </main>
     </div>
   );
