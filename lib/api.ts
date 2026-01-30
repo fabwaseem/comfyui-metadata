@@ -1,3 +1,4 @@
+import { extractMetadata as extractFromBuffer } from "@/lib/extract-metadata";
 import type { Metadata } from "@/types";
 
 export type ExtractResult =
@@ -5,18 +6,13 @@ export type ExtractResult =
   | { metadata: null; error: string };
 
 export async function extractMetadata(file: File): Promise<ExtractResult> {
-  const form = new FormData();
-  form.set("file", file);
-  const res = await fetch("/api/extract-metadata", {
-    method: "POST",
-    body: form,
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    return {
-      metadata: null,
-      error: (data as { error?: string }).error ?? "Failed to extract",
-    };
+  try {
+    const buffer = await file.arrayBuffer();
+    const metadata = extractFromBuffer(buffer);
+    return { metadata, error: null };
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Failed to extract metadata";
+    return { metadata: null, error: message };
   }
-  return { metadata: data as Metadata, error: null };
 }
