@@ -75,11 +75,13 @@ const ImageCard = memo(function ImageCard({
   loading,
   onRemove,
   layout = "horizontal",
+  fixedImageHeight = false,
 }: {
   item: ResultItem;
   loading: boolean;
   onRemove: (item: ResultItem) => void;
   layout?: "horizontal" | "vertical";
+  fixedImageHeight?: boolean;
 }) {
   const [copiedPositive, setCopiedPositive] = useState(false);
   const [copiedNegative, setCopiedNegative] = useState(false);
@@ -107,7 +109,9 @@ const ImageCard = memo(function ImageCard({
     <div
       className={cn(
         "relative shrink-0 overflow-hidden bg-muted",
-        layout === "horizontal" ? "flex w-40 sm:w-52" : "w-full"
+        layout === "horizontal" && "flex w-40 sm:w-52",
+        layout === "vertical" && "w-full",
+        layout === "vertical" && fixedImageHeight && "h-52 sm:h-56"
       )}
     >
       <img
@@ -120,6 +124,8 @@ const ImageCard = memo(function ImageCard({
         className={cn(
           layout === "horizontal"
             ? "size-full object-cover"
+            : fixedImageHeight
+            ? "size-full object-contain"
             : "w-full h-auto object-contain"
         )}
       />
@@ -509,7 +515,10 @@ export default function AppPage() {
               columnClassName="masonry-grid_column"
             >
               {results.map((r) => (
-                <div key={r.file.name + r.file.size} className="content-visibility-auto">
+                <div
+                  key={r.file.name + r.file.size}
+                  className="content-visibility-auto"
+                >
                   <ImageCard
                     item={r}
                     loading={loading}
@@ -530,12 +539,18 @@ export default function AppPage() {
             )}
           >
             {results.map((r) => (
-              <div key={r.file.name + r.file.size} className="content-visibility-auto">
+              <div
+                key={r.file.name + r.file.size}
+                className="content-visibility-auto"
+              >
                 <ImageCard
                   item={r}
                   loading={loading}
                   onRemove={handleRemoveSingle}
-                  layout={viewMode === "grid-detail" ? "vertical" : "horizontal"}
+                  layout={
+                    viewMode === "grid-detail" ? "vertical" : "horizontal"
+                  }
+                  fixedImageHeight={viewMode === "grid-detail"}
                 />
               </div>
             ))}

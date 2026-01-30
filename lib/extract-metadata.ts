@@ -58,7 +58,12 @@ export function extractMetadata(buffer: ArrayBuffer): Metadata {
   if (!prompt && parameters) {
     const civitai = parseCivitaiParameters(parameters);
     if (civitai) {
-      prompt = { positive: civitai.positive };
+      prompt = {
+        positive: civitai.positive,
+        ...(civitai.negative != null && civitai.negative.length > 0
+          ? { negative: civitai.negative }
+          : {}),
+      };
       models = civitai.models;
       if (civitai.width != null && civitai.height != null) {
         width = civitai.width;
@@ -79,19 +84,20 @@ export function extractMetadata(buffer: ArrayBuffer): Metadata {
   return result;
 }
 
-function parseCivitaiParameters(parameters: string): {
+type CivitaiParseResult = {
   positive: string;
+  negative?: string;
   models: string[];
   width?: number;
   height?: number;
-} | null {
+};
+
+function parseCivitaiParameters(parameters: string): CivitaiParseResult | null {
   const trimmed = parameters.trim();
-  const quotedMatch = trimmed.match(/^"((?:[^"\\]|\\.)*)"/);
-  if (!quotedMatch) return null;
-  const positive = quotedMatch[1].replace(/\\(.)/g, "$1");
+  if (!trimmed.length) return null;
+
   const models: string[] = [];
   const seen = new Set<string>();
-
   const addModel = (name: string) => {
     const n = name.trim();
     if (n && !seen.has(n)) {
@@ -100,14 +106,63 @@ function parseCivitaiParameters(parameters: string): {
     }
   };
 
+  let positive: string;
+  let negative: string | undefined;
+  let tail = trimmed;
+
+  const quotedMatch = trimmed.match(/^"((?:[^"\\]|\\.)*)"/);
+  if (quotedMatch) {
+    positive = quotedMatch[1].replace(/\\(.)/g, "$1");
+    tail = trimmed.slice(quotedMatch[0].length);
+  } else {
+    const negLabel = "\nNegative prompt:";
+    const negIdx = trimmed.indexOf(negLabel);
+    const stepsIdx = trimmed.search(/\nSteps:\s*\d+/i);
+    const modelIdx = trimmed.search(/\nModel:\s*/i);
+
+    if (negIdx >= 0) {
+      positive = trimmed.slice(0, negIdx).trim();
+      const afterNeg = trimmed.slice(negIdx + negLabel.length);
+      const stepsMatch = afterNeg.match(/\nSteps:\s*\d+/i);
+      negative = stepsMatch
+        ? afterNeg.slice(0, stepsMatch.index).trim()
+        : afterNeg.trim();
+      negative = negative.length ? negative : undefined;
+      tail =
+        stepsMatch && stepsMatch.index != null
+          ? afterNeg.slice(stepsMatch.index)
+          : modelIdx >= 0
+          ? trimmed.slice(modelIdx)
+          : "";
+    } else {
+      const metaStart = trimmed.search(/\nSteps:\s*\d+|\nModel:\s*/i);
+      if (metaStart >= 0) {
+        positive = trimmed.slice(0, metaStart).trim();
+        tail = trimmed.slice(metaStart);
+      } else {
+        positive = trimmed;
+        tail = "";
+      }
+    }
+  }
+
+  if (!positive.length) return null;
+
   const loraTagRegex = /<lora:([^>:]+)(?::[^>]+)?>/gi;
   let m: RegExpExecArray | null;
-  while ((m = loraTagRegex.exec(trimmed)) !== null) addModel(m[1]);
+  while ((m = loraTagRegex.exec(tail)) !== null) addModel(m[1]);
 
-  const modelMatch = trimmed.match(/Model:\s*([^,]+)/i);
-  if (modelMatch) addModel(modelMatch[1]);
+  const modelMatch = tail.match(
+    /Model:\s*([^,]+?)(?:\s*,\s*Model hash:|\s*,\s*VAE:|\s*,\s*Clip skip:|$)/i
+  );
+  if (modelMatch) addModel(modelMatch[1].trim());
 
-  const loraHashesMatch = trimmed.match(/Lora hashes:\s*"([^"]+)"/i);
+  const vaeMatch = tail.match(
+    /VAE:\s*([^,]+?)(?:\s*,\s*VAE hash:|\s*,\s*Hashes:|\s*$)/i
+  );
+  if (vaeMatch) addModel(vaeMatch[1].trim());
+
+  const loraHashesMatch = tail.match(/Lora hashes:\s*"([^"]+)"/i);
   if (loraHashesMatch) {
     const pairs = loraHashesMatch[1].split(",").map((s) => s.trim());
     for (const p of pairs) {
@@ -118,18 +173,20 @@ function parseCivitaiParameters(parameters: string): {
 
   let width: number | undefined;
   let height: number | undefined;
-  const sizeMatch = trimmed.match(/Size:\s*(\d+)\s*[x×]\s*(\d+)/i);
+  const sizeMatch = tail.match(/Size:\s*(\d+)\s*[x×]\s*(\d+)/i);
   if (sizeMatch) {
     width = parseInt(sizeMatch[1], 10);
     height = parseInt(sizeMatch[2], 10);
   }
 
-  const out: {
-    positive: string;
-    models: string[];
-    width?: number;
-    height?: number;
-  } = { positive, models };
+  const out: CivitaiParseResult = { positive, models };
+  if (
+    negative != null &&
+    negative.length > 0 &&
+    negative.trim() !== positive.trim()
+  ) {
+    out.negative = negative;
+  }
   if (width != null && height != null) {
     out.width = width;
     out.height = height;
@@ -176,6 +233,8 @@ type PromptNode = {
   class_type?: string;
 };
 
+const PROMPT_INPUT_KEYS = ["prompt_text", "text", "value", "string", "prompt"];
+
 function getNodeStringValue(
   prompt: Record<string, unknown>,
   nodeId: string
@@ -183,11 +242,11 @@ function getNodeStringValue(
   const node = prompt[nodeId] as PromptNode | undefined;
   if (!node?.inputs) return null;
   const inputs = node.inputs as Record<string, unknown>;
-  if (typeof inputs.value === "string" && inputs.value.trim() !== "") {
-    return inputs.value;
-  }
-  if (typeof inputs.text === "string" && inputs.text.trim() !== "") {
-    return inputs.text;
+  for (const key of PROMPT_INPUT_KEYS) {
+    const val = inputs[key];
+    if (typeof val === "string" && val.trim() !== "") {
+      return val.trim();
+    }
   }
   if (
     Array.isArray(inputs.text) &&

@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ComfyUI Metadata Preview
 
-## Getting Started
+Free tool to extract prompts, workflow, and metadata from ComfyUI and Civitai PNG images. View positive and negative prompts, models, dimensions, and export to JSON, text, or CSV. No signup required.
 
-First, run the development server:
+## Features
+
+- **Prompt extraction** — Read positive/negative prompts from embedded ComfyUI workflow (including linked nodes like PromptEnhancer) and Civitai-style parameters
+- **Workflow** — Inspect workflow JSON and node graph stored in the image
+- **Bulk & export** — Process many images at once; export prompts as JSON, text, or CSV, or workflow as JSON
+- **Views** — List, grid (fixed-height cards), or masonry
+- **Add by URL** — Load images from a URL in addition to drag-and-drop
+
+## Tech
+
+- Next.js 16, React 19, TypeScript
+- Tailwind v4, shadcn/ui, Lucide icons
+- Fonts: Syne, DM Sans
+- `png-chunks-extract` / `png-chunk-text` for PNG metadata; `react-dropzone`, `react-masonry-css`
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Drop PNGs on the landing page or open `/app` to add by URL or upload more.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+- `app/` — Routes: landing (`page.tsx`), app UI (`app/`), API (`api/extract-metadata`)
+- `components/` — Landing (upload zone, theme toggle), app (sidebar, add-by-URL dialog), `ui/` (shadcn)
+- `contexts/` — Images state, app layout (sidebar/mobile)
+- `lib/` — Metadata extraction (ComfyUI + Civitai parameters), export, API client
+- `hooks/` — Container size (masonry), mobile detection
+- `types/` — Shared types
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private.
