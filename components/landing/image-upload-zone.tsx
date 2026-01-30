@@ -56,7 +56,8 @@ export function ImageUploadZone({ noNavigate }: ImageUploadZoneProps = {}) {
 
   const inputProps = getInputProps();
   const rootProps = getRootProps({
-    "aria-label": "Drop images or click to browse (PNG, JPG, WebP)",
+    "aria-label":
+      "Drop images or click to browse. Processed in your browser (PNG, JPG, WebP)",
   });
 
   return (
@@ -93,7 +94,7 @@ export function ImageUploadZone({ noNavigate }: ImageUploadZoneProps = {}) {
             : "Drag & drop images here, or click to browse"}
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          PNG, JPG, WebP · Single or bulk
+          PNG, JPG, WebP · Single or bulk · Stays on your device
         </p>
       </div>
     </div>

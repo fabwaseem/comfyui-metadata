@@ -85,7 +85,8 @@ export function AddByUrlDialog({
         <DialogHeader>
           <DialogTitle>Add image by URL</DialogTitle>
           <DialogDescription>
-            Enter an image URL to fetch and add it for metadata extraction.
+            Enter an image URL to load the image. Metadata is extracted in your
+            browser — nothing is uploaded.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">

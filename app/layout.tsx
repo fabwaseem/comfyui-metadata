@@ -20,7 +20,7 @@ const siteName = "ComfyUI Metadata Preview";
 const defaultTitle =
   "ComfyUI Metadata Preview — Extract prompts & workflow from ComfyUI PNGs";
 const defaultDescription =
-  "Free tool to extract prompts, workflow, and metadata from ComfyUI and Civitai PNG images. View positive and negative prompts, models, and export to JSON, text, or CSV. No signup required.";
+  "Free tool to extract prompts, workflow, and metadata from ComfyUI and Civitai PNG images in your browser. Nothing is uploaded. View positive and negative prompts, models, and export to JSON, text, or CSV. No signup required.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -102,10 +102,11 @@ export default function RootLayout({
       priceCurrency: "USD",
     },
     featureList: [
+      "Client-side extraction — nothing uploaded or sent to a server",
       "Extract prompts from ComfyUI and Civitai PNG images",
       "View workflow metadata and models",
       "Export to JSON, text, or CSV",
-      "Bulk processing",
+      "Bulk processing in your browser",
     ],
   };
 

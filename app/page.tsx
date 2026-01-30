@@ -39,7 +39,7 @@ export default function LandingPage() {
         <section className="text-center">
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
             <Sparkles className="size-4" aria-hidden />
-            Free · No signup
+            Free · No signup · No upload
           </p>
           <h1 className="font-syne text-4xl font-bold tracking-tight text-foreground text-balance sm:text-5xl md:text-6xl">
             Extract prompts & workflow
@@ -47,8 +47,8 @@ export default function LandingPage() {
             <span className="text-primary">from ComfyUI PNGs</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Drop ComfyUI-generated images to view embedded prompts and workflow
-            metadata. Single or bulk — all in the browser.
+            Drop images to view prompts and workflow. Everything runs in your
+            browser — nothing is uploaded or sent to a server.
           </p>
         </section>
 
@@ -68,8 +68,8 @@ export default function LandingPage() {
               Prompt extraction
             </h3>
             <p className="text-sm text-muted-foreground">
-              Read positive/negative prompts and node text from embedded
-              metadata.
+              Read positive and negative prompts from embedded metadata.
+              Processed locally in your browser.
             </p>
           </div>
           <div className="glass-card flex flex-col items-center gap-3 p-6 text-center">
@@ -80,7 +80,8 @@ export default function LandingPage() {
               Workflow view
             </h3>
             <p className="text-sm text-muted-foreground">
-              Inspect node graph and parameters stored inside the image.
+              Inspect node graph and parameters stored in the image. No data
+              leaves your device.
             </p>
           </div>
           <div className="glass-card flex flex-col items-center gap-3 p-6 text-center">
@@ -91,13 +92,17 @@ export default function LandingPage() {
               Bulk & export
             </h3>
             <p className="text-sm text-muted-foreground">
-              Process many images at once and export prompts or workflow JSON.
+              Process many images at once in your browser. Export prompts or
+              workflow JSON. No uploads.
             </p>
           </div>
         </section>
 
         <footer className="mt-24 border-t border-glass-border py-8 text-center text-sm text-muted-foreground">
-          <p>ComfyUI Metadata · Extract and view metadata from ComfyUI PNGs</p>
+          <p>
+            ComfyUI Metadata · Extract prompts in your browser. No upload, no
+            signup.
+          </p>
           <p className="mt-2">
             <a
               href="https://waseemanjum.com"

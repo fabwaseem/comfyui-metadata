@@ -4,7 +4,7 @@ import { AppLayoutClient } from "./app-layout-client";
 export const metadata: Metadata = {
   title: "Metadata Extractor",
   description:
-    "Extract and view prompts, workflow, and models from ComfyUI and Civitai images. Export to JSON, text, or CSV.",
+    "Extract prompts and workflow in your browser. Nothing is uploaded. Export to JSON, text, or CSV.",
   robots: {
     index: true,
     follow: true,

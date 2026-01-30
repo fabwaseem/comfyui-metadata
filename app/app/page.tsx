@@ -484,10 +484,10 @@ export default function AppPage() {
             size="sm"
             onClick={handleUploadMore}
             className="shrink-0"
-            aria-label="Upload more images"
+            aria-label="Add more images"
           >
             <Plus className="size-4 sm:mr-1.5" aria-hidden />
-            <span className="hidden sm:inline">Upload more</span>
+            <span className="hidden sm:inline">Add more</span>
           </Button>
           <Button
             variant="outline"
